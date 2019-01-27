@@ -77,7 +77,7 @@ extension-element-prefixes="exsl"
               </compare>
             </xsl:if>
             <!-- one has children and one does not have children therefore mismatched -->
-            <xsl:if test="(not(exsl:node-set($comparer)/*) and exsl:node-set($tree)/*) or (exsl:node-set($comparer)/* and not(exsl:node-set($tree)/*))">
+            <xsl:if test="(not(exsl:node-set($comparer)/*/*) and exsl:node-set($tree)/*/*) or (exsl:node-set($comparer)/*/* and not(exsl:node-set($tree)/*/*))">
               <tree>
                 <mismatch>
                   <xsl:copy-of select="exsl:node-set($tree)"/>
@@ -90,7 +90,7 @@ extension-element-prefixes="exsl"
               </compare>              
             </xsl:if>
             <!-- pair of match leaves -->
-            <xsl:if test="not(exsl:node-set($comparer)/*) and not(exsl:node-set($tree)/*)">
+            <xsl:if test="not(exsl:node-set($comparer)/*/*) and not(exsl:node-set($tree)/*/*)">
               <tree>
                 <match>
                   <xsl:copy-of select="exsl:node-set($tree)"/>
@@ -118,6 +118,7 @@ extension-element-prefixes="exsl"
             <xsl:call-template name="splitter">
               <xsl:with-param name="tree" select="exsl:node-set($tree)"/>
               <xsl:with-param name="comparer" select="exsl:node-set($range-left)/*"/>
+              <!--bug? $range-left/*/* -->
             </xsl:call-template>
           </xsl:variable>
           <xsl:if test="exsl:node-set($result-left)//tree/mismatch">
