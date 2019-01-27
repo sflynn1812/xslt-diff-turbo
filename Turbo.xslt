@@ -30,90 +30,217 @@ extension-element-prefixes="exsl"
   <xsl:template name="splitter" >
     <xsl:param name="comparer"/>
     <xsl:param name="tree"/>
-    <result>
-    <xsl:if test="count(exsl:node-set($comparer)) = 1">
-      <xsl:if test="count(exsl:node-set($tree)) = 1">
-        <xsl:variable name="isMatch">
-          <xsl:call-template name="match-node">
-            <xsl:with-param name="node1" select="exsl:node-set($comparer)/."></xsl:with-param> 
-            <xsl:with-param name="node2" select="exsl:node-set($tree)/."></xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
-        <xsl:if test="exsl:node-set($isMatch)//mismatch">
-          <comparer>
-            <mismatch>
-              <xsl:copy-of select="exsl:node-set($comparer)/."/>
-            </mismatch>
-          </comparer>
-          <tree>
-            <mismatch>
-              <xsl:copy-of select="exsl:node-set($tree)/."/>
-            </mismatch>
-          </tree>
-        </xsl:if>
-      <xsl:if test="not(exsl:node-set($isMatch)//mismatch)">
-        <xsl:if test="exsl:node-set($comparer)/* and exsl:node-set($tree)/*">
-            <xsl:variable name="child-recurse">
+    <root>
+      <xsl:if test="count(exsl:node-set($comparer)) = 1">
+        <xsl:if test="count(exsl:node-set($tree)) = 1">
+          <xsl:variable name="isMatch">
+            <xsl:call-template name="match-node">
+              <xsl:with-param name="node1" select="exsl:node-set($comparer)/."></xsl:with-param>
+              <xsl:with-param name="node2" select="exsl:node-set($tree)/."></xsl:with-param>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:if test="exsl:node-set($isMatch)//mismatch">
+            <comparer>
+              <mismatch>
+                <xsl:copy-of select="exsl:node-set($comparer)/."/>
+              </mismatch>
+            </comparer>
+            <tree>
+              <mismatch>
+                <xsl:copy-of select="exsl:node-set($tree)/."/>
+              </mismatch>
+            </tree>
+          </xsl:if>
+          <xsl:if test="not(exsl:node-set($isMatch)//mismatch)">
+            <xsl:if test="exsl:node-set($comparer)/* and exsl:node-set($tree)/*">
+              <xsl:variable name="child-recurse">
                 <xsl:call-template name="splitter">
                   <xsl:with-param name="comparer" select="exsl:node-set($comparer)/*"/>
                   <xsl:with-param name="tree" select="exsl:node-set($comparer)/*"/>
                 </xsl:call-template>
-            </xsl:variable>
-            <!-- post process child recurse on single node (post process function?) -->
+              </xsl:variable>
+              <!-- post process child recurse on single node (post process function?) -->
+              <tree>
+                <mismatch>
+                  <xsl:copy-of select="exsl:node-set($child-recurse)//tree/mismatch/*"/>
+                </mismatch>
+                <match>
+                  <xsl:copy-of select="exsl:node-set($child-recurse)//tree/match/*"/>
+                </match>
+              </tree>
+              <compare>
+                <mismatch>
+                  <xsl:copy-of select="exsl:node-set($child-recurse)//compare/mismatch/*"/>
+                </mismatch>
+                <match>
+                  <xsl:copy-of select="exsl:node-set($child-recurse)//compare/match/*"/>
+                </match>
+              </compare>
+            </xsl:if>
+            <!-- one has children and one does not have children therefore mismatched -->
+            <xsl:if test="(not(exsl:node-set($comparer)/*) and exsl:node-set($tree)/*) or (exsl:node-set($comparer)/* and not(exsl:node-set($tree)/*))">
+              <tree>
+                <mismatch>
+                  <xsl:copy-of select="exsl:node-set($tree)"/>
+                </mismatch>
+              </tree>
+              <compare>
+                <mismatch>
+                  <xsl:copy-of select="exsl:node-set($comparer)"/>
+                </mismatch>
+              </compare>              
+            </xsl:if>
+            <!-- pair of match leaves -->
+            <xsl:if test="not(exsl:node-set($comparer)/*) and not(exsl:node-set($tree)/*)">
+              <tree>
+                <match>
+                  <xsl:copy-of select="exsl:node-set($tree)"/>
+                </match>
+              </tree>
+              <compare>
+                <match>
+                  <xsl:copy-of select="exsl:node-set($comparer)"/>
+                </match>
+              </compare>                          
+            </xsl:if>
+          </xsl:if>
+        </xsl:if>
+      </xsl:if>
+      <xsl:if test="count(exsl:node-set($comparer)) > 1">
+        <xsl:if test="count(exsl:node-set($tree)) = 1">
+          <xsl:variable name="range-left">
+            <xsl:call-template name="Range">
+              <xsl:with-param name="Array" select="exsl:node-set($comparer)/."/>
+              <xsl:with-param name="StartIndex" select="0" />
+              <xsl:with-param name="EndIndex" select="(count(exsl:node-set($comparer)/.) div 2)" />
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:if test="exsl:node-set($range-left)//tree/mismatch">
+          <xsl:variable name="range-right">
+            <xsl:call-template name="Range">
+              <xsl:with-param name="Array" select="exsl:node-set($comparer)/."/>
+              <xsl:with-param name="StartIndex" select="count(exsl:node-set($comparer)/.) div 2" />
+              <xsl:with-param name="EndIndex" select="count(exsl:node-set($comparer)/.)" />
+            </xsl:call-template> 
+             </xsl:variable>
+            <tree>
+              <match>
+                <xsl:copy-of select="exsl:node-set($tree)//tree/match/*"/>
+              </match>
+              <mismatch>
+                <xsl:copy-of select="exsl:node-set($tree)//tree/mismatch/*"/>
+              </mismatch>
+            </tree>
+            <compare>
+              <match>
+                <xsl:copy-of select="exsl:node-set($range-right)//compare/match/*"/>
+              </match>
+              <mismatch>
+                <xsl:copy-of select="exsl:node-set($range-right)//compare/mismatch/*"/>
+              </mismatch>
+            </compare>
+          </xsl:if>
+          <tree>
+            <match>
+              <xsl:copy-of select="exsl:node-set($tree)//tree/match/*"/>
+            </match>
+            <mismatch>
+              <xsl:copy-of select="exsl:node-set($tree)//tree/mismatch/*"/>
+            </mismatch>
+          </tree>
+          <compare>
+            <match>
+              <xsl:copy-of select="exsl:node-set($range-left)//compare/match/*"/>
+            </match>
+            <mismatch>
+              <xsl:copy-of select="exsl:node-set($range-left)//compare/mismatch/*"/>
+            </mismatch>
+          </compare>
         </xsl:if>
       </xsl:if>
       <xsl:if test="count(exsl:node-set($tree)) > 1">
-	<xsl:variable name="range-left">
-	   <xsl:call-template name="Range">
+          <xsl:variable name="range-left">
+            <xsl:call-template name="Range">
               <xsl:with-param name="Array" select="exsl:node-set($tree)/."/>
               <xsl:with-param name="StartIndex" select="0" />
-              <xsl:with-param name="EndIndex" select="count(exsl:node-set($tree)/.) / 2" />
-           </xsl:call-template>
-        </xsl:variable>	
-	<xsl:variable name="range-right">
-	   <xsl:call-template name="Range">
+              <xsl:with-param name="EndIndex" select="(count(exsl:node-set($tree)/.) div 2)" />
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="range-right">
+            <xsl:call-template name="Range">
               <xsl:with-param name="Array" select="exsl:node-set($tree)/."/>
-              <xsl:with-param name="StartIndex" select="count(exsl:node-set($tree)/.) / 2" />
+              <xsl:with-param name="StartIndex" select="count(exsl:node-set($tree)/.) div 2" />
               <xsl:with-param name="EndIndex" select="count(exsl:node-set($tree)/.)" />
-           </xsl:call-template>
-        </xsl:variable>	
-<xsl:variable name="result-left">
-        <xsl:call-template name="splitter">
-            <xsl:with-param name="comparer" select="exsl:node-set($range-left)/*"/>
-            <xsl:with-param name="tree" select="exsl:node-set($comparer)/*"/>   
-	</xsl:call-template>
-</xsl:variable>
-<xsl:variable name="result-right">
-        <xsl:call-template name="splitter">
-            <xsl:with-param name="comparer" select="exsl:node-set($range-right)/*"/>
-            <xsl:with-param name="tree" select="exsl:node-set($comparer)/*"/>   
-	</xsl:call-template>
-</xsl:variable>
-<xsl:variable name="combine-mismatch">
-   <root>
-      <tree>
-	<xsl:copy-of select="exsl:node-set($result-left)//mismatch-tree/*"/>
-        <xsl:copy-of select="exsl:node-set($result-right)//mismatch-tree/*"/>
-      </tree>
-      <compare>
-	<xsl:copy-of select="exsl:node-set($result-left)//mismatch-compare/*"/>
-        <xsl:copy-of select="exsl:node-set($result-right)//mismatch-compare/*"/>
-      </compare>
-   </root>
-</xsl:variable>
-<xsl:variable name="recurse-mismatches">
-        <xsl:call-template name="splitter">
-            <xsl:with-param name="comparer" select="exsl:node-set($combine-mismatch)/compare"/>
-            <xsl:with-param name="tree" select="exsl:node-set($comparer)/tree"/>   
-	</xsl:call-template>
-</xsl:variable>
-      </xsl:if>
-      </xsl:if>
-    </xsl:if>
-    <xsl:if>
-       
-    </xsl:if>
-    </result>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="result-left">
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="tree" select="exsl:node-set($range-left)"/>
+              <xsl:with-param name="comparer" select="exsl:node-set($comparer)"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="result-right">
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="tree" select="exsl:node-set($range-right)"/>
+              <xsl:with-param name="comparer" select="exsl:node-set($comparer)"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:if test="exsl:node-set($result-left)//tree/mismatch or exsl:node-set($result-right)//tree/mismatch">
+          <xsl:variable name="result-left-swap">
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="comparer" select="exsl:node-set($result-right)//compare/mismatch"/>
+              <xsl:with-param name="tree" select="exsl:node-set($result-left)//tree/mismatch"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:variable name="result-right-swap">
+            <xsl:call-template name="splitter">
+              <xsl:with-param name="comparer" select="exsl:node-set($result-left)//compare/mismatch"/>
+              <xsl:with-param name="tree" select="exsl:node-set($result-right)//tree/mismatch"/>
+            </xsl:call-template>
+          </xsl:variable>
+          <tree>
+            <mismatch>
+              <xsl:copy-of select="exsl:node-set($result-left-swap)//tree/mismatch/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right-swap)//tree/mismatch/*"/>
+            </mismatch>
+            <match>
+              <xsl:copy-of select="exsl:node-set($result-left-swap)//tree/match/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right-swap)//tree/match/*"/>
+            </match>
+          </tree>
+          <compare>
+            <mismatch>
+              <xsl:copy-of select="exsl:node-set($result-left-swap)//compare/mismatch/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right-swap)//compare/mismatch/*"/>
+            </mismatch>
+            <match>
+              <xsl:copy-of select="exsl:node-set($result-left-swap)//compare/match/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right-swap)//compare/match/*"/>
+            </match>
+          </compare>
+          </xsl:if>
+          <tree>
+            <mismatch>
+              <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right)//tree/mismatch/*"/>
+            </mismatch>
+            <match>
+              <xsl:copy-of select="exsl:node-set($result-left)//tree/match/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right)//tree/match/*"/>
+            </match>
+          </tree>
+          <compare>
+            <mismatch>
+              <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
+            </mismatch>
+            <match>
+              <xsl:copy-of select="exsl:node-set($result-left)//compare/match/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right)//compare/match/*"/>
+            </match>
+          </compare>
+        </xsl:if> 
+    </root>
   </xsl:template>
   <!-- sub function for matching single nodes -->
   <xsl:template name="match-node">
