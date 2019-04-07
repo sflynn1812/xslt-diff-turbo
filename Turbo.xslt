@@ -5,7 +5,7 @@ xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\ComplexExample\lefthand.xml')" />
+  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\OrphanedBranch\lefthand.xml')" />
   <xsl:template match="comment()"/>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
@@ -217,7 +217,7 @@ extension-element-prefixes="exsl"
         <xsl:variable name="result-right">
           <xsl:call-template name="splitter">
             <xsl:with-param name="tree" select="exsl:node-set($range-right)/*"/>
-            <xsl:with-param name="comparer" select="exsl:node-set($result-left)//compare/mismatch/*"/>
+            <xsl:with-param name="comparer" select="exsl:node-set($comparer)/."/>
           </xsl:call-template>
         </xsl:variable>
         <!--result left contains root outside of compare / tree???-->
@@ -277,8 +277,8 @@ extension-element-prefixes="exsl"
               </xsl:if>
             </mismatch>
             <match>
-                <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
-                <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
+                <xsl:copy-of select="exsl:node-set($result-left)//compare/match/*"/>
+                <xsl:copy-of select="exsl:node-set($result-right)//compare/match/*"/>
             </match>
           </compare>
         </xsl:if>
