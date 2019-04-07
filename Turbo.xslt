@@ -240,6 +240,12 @@ extension-element-prefixes="exsl"
             <mismatch>
               <xsl:copy-of select="exsl:node-set($result-left-swap)//tree/mismatch/*"/>
               <xsl:copy-of select="exsl:node-set($result-right-swap)//tree/mismatch/*"/>
+              <xsl:if test="not(exsl:node-set($result-right)//compare/mismatch/*)">
+                <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
+              </xsl:if>
+              <xsl:if test="not(exsl:node-set($result-left)//compare/mismatch/*)">
+                <xsl:copy-of select="exsl:node-set($result-right)//tree/mismatch/*"/>
+              </xsl:if>
             </mismatch>
             <match>
               <xsl:copy-of select="exsl:node-set($result-left-swap)//tree/match/*"/>
@@ -250,6 +256,12 @@ extension-element-prefixes="exsl"
             <mismatch>
               <xsl:copy-of select="exsl:node-set($result-left-swap)//compare/mismatch/*"/>
               <xsl:copy-of select="exsl:node-set($result-right-swap)//compare/mismatch/*"/>
+              <xsl:if test="not(exsl:node-set($result-left)//tree/mismatch/*)">
+                <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
+              </xsl:if>
+              <xsl:if test="not(exsl:node-set($result-right)//tree/mismatch/*)">
+                <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
+              </xsl:if>
             </mismatch>
             <match>
               <xsl:copy-of select="exsl:node-set($result-left-swap)//compare/match/*"/>
