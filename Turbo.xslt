@@ -5,7 +5,7 @@ xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\OrphanedBranch\lefthand.xml')" />
+  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\ComplexExample\lefthand.xml')" />
   <xsl:template match="comment()"/>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
@@ -141,7 +141,7 @@ extension-element-prefixes="exsl"
               <xsl:with-param name="comparer" select="exsl:node-set($range-left)/*"/>
             </xsl:call-template>
           </xsl:variable>
-          <xsl:if test="exsl:node-set($result-left)//tree/mismatch/* or exsl:node-set($result-left)//compare/mismatch/*">
+          <xsl:if test="not(exsl:node-set($result-left)//tree/match/*)">
             <xsl:variable name="range-right">
               <xsl:call-template name="Range">
                 <xsl:with-param name="Array" select="exsl:node-set($comparer)/."/>
@@ -193,7 +193,7 @@ extension-element-prefixes="exsl"
           </xsl:if>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="count(exsl:node-set($tree)) > 1">
+      <xsl:if test="count(exsl:node-set($tree)) > 1 and count(exsl:node-set($comparer)) > 1">
         <xsl:variable name="range-left">
           <xsl:call-template name="Range">
             <xsl:with-param name="Array" select="exsl:node-set($tree)/."/>
@@ -217,7 +217,7 @@ extension-element-prefixes="exsl"
         <xsl:variable name="result-right">
           <xsl:call-template name="splitter">
             <xsl:with-param name="tree" select="exsl:node-set($range-right)/*"/>
-            <xsl:with-param name="comparer" select="exsl:node-set($comparer)/."/>
+            <xsl:with-param name="comparer" select="exsl:node-set($result-left)//compare/mismatch/*"/>
           </xsl:call-template>
         </xsl:variable>
         <!--result left contains root outside of compare / tree???-->
@@ -260,8 +260,8 @@ extension-element-prefixes="exsl"
           <tree>
             <mismatch>
               <xsl:if test="not((exsl:node-set($result-left)//tree/mismatch/* or exsl:node-set($result-right)//tree/mismatch/*) and $swapFlag = 0)">
-                <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
-                <xsl:copy-of select="exsl:node-set($result-right)//tree/mismatch/*"/>
+                  <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
+                  <xsl:copy-of select="exsl:node-set($result-right)//tree/mismatch/*"/>
               </xsl:if>
             </mismatch>
             <match>
@@ -277,8 +277,8 @@ extension-element-prefixes="exsl"
               </xsl:if>
             </mismatch>
             <match>
-              <xsl:copy-of select="exsl:node-set($result-left)//compare/match/*"/>
-              <xsl:copy-of select="exsl:node-set($result-right)//compare/match/*"/>
+                <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
+                <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
             </match>
           </compare>
         </xsl:if>
@@ -301,7 +301,7 @@ extension-element-prefixes="exsl"
             <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
           </match>
         </xsl:if>
-        <xsl:if test="not(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
+        <xsl:if test="not((not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', '')))">
           <mismatch>
             <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
           </mismatch>
