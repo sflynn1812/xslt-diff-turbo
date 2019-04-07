@@ -5,7 +5,7 @@ xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('right.xml')" />
+  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\OrphanedBranch\lefthand.xml')" />
   <xsl:template match="comment()"/>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
@@ -29,6 +29,7 @@ extension-element-prefixes="exsl"
   <xsl:template name="splitter" >
     <xsl:param name="comparer"/>
     <xsl:param name="tree"/>
+    <xsl:param name="swapFlag" select="0"/>
     <root>
       <xsl:if test="count(exsl:node-set($comparer)) = 1">
         <xsl:if test="count(exsl:node-set($tree)) = 1">
@@ -39,11 +40,11 @@ extension-element-prefixes="exsl"
             </xsl:call-template>
           </xsl:variable>
           <xsl:if test="exsl:node-set($isMatch)//mismatch/*">
-            <comparer>
+            <compare>
               <mismatch>
                 <xsl:copy-of select="exsl:node-set($comparer)/."/>
               </mismatch>
-            </comparer>
+            </compare>
             <tree>
               <mismatch>
                 <xsl:copy-of select="exsl:node-set($tree)/."/>
@@ -63,7 +64,7 @@ extension-element-prefixes="exsl"
                 <mismatch>
                   <xsl:if test="exsl:node-set($child-recurse)//tree/mismatch/*">
                     <xsl:element name="{local-name($tree)}">
-                      <xsl:copy-of select="@*"/>
+                      <xsl:copy-of select="exsl:node-set($tree)/@*"/>
                       <xsl:copy-of select="exsl:node-set($child-recurse)//tree/mismatch/*"/>                  
                     </xsl:element>
                   </xsl:if>
@@ -71,7 +72,7 @@ extension-element-prefixes="exsl"
                 <match>
                   <xsl:if test="exsl:node-set($child-recurse)//tree/match/*">
                     <xsl:element name="{local-name($tree)}">
-                      <xsl:copy-of select="@*"/>
+                      <xsl:copy-of select="exsl:node-set($tree)/@*"/>
                       <xsl:copy-of select="exsl:node-set($child-recurse)//tree/match/*"/>
                     </xsl:element>
                   </xsl:if>
@@ -81,7 +82,7 @@ extension-element-prefixes="exsl"
                 <mismatch>
                   <xsl:if test="exsl:node-set($child-recurse)//compare/mismatch/*">
                   <xsl:element name="{local-name($comparer)}">
-                    <xsl:copy-of select="@*"/>
+                    <xsl:copy-of select="exsl:node-set($comparer)/@*"/>
                     <xsl:copy-of select="exsl:node-set($child-recurse)//compare/mismatch/*"/>
                   </xsl:element>
                   </xsl:if>
@@ -89,7 +90,7 @@ extension-element-prefixes="exsl"
                 <match>
                   <xsl:if test="exsl:node-set($child-recurse)//compare/match/*">
                     <xsl:element name="{local-name($comparer)}">
-                      <xsl:copy-of select="@*"/>
+                      <xsl:copy-of select="exsl:node-set($comparer)/@*"/>
                       <xsl:copy-of select="exsl:node-set($child-recurse)//compare/match/*"/>
                     </xsl:element>
                   </xsl:if>
@@ -113,12 +114,12 @@ extension-element-prefixes="exsl"
             <xsl:if test="not(exsl:node-set($comparer)/*) and not(exsl:node-set($tree)/*)">
               <tree>
                 <match>
-                  <xsl:copy-of select="exsl:node-set($tree)"/>
+                      <xsl:copy-of select="exsl:node-set($tree)"/>
                 </match>
               </tree>
               <compare>
                 <match>
-                  <xsl:copy-of select="exsl:node-set($comparer)"/>
+                    <xsl:copy-of select="exsl:node-set($comparer)"/>
                 </match>
               </compare>
             </xsl:if>
@@ -140,7 +141,7 @@ extension-element-prefixes="exsl"
               <xsl:with-param name="comparer" select="exsl:node-set($range-left)/*"/>
             </xsl:call-template>
           </xsl:variable>
-          <xsl:if test="exsl:node-set($result-left)//tree/mismatch/*">
+          <xsl:if test="exsl:node-set($result-left)//tree/mismatch/* or exsl:node-set($result-left)//compare/mismatch/*">
             <xsl:variable name="range-right">
               <xsl:call-template name="Range">
                 <xsl:with-param name="Array" select="exsl:node-set($comparer)/."/>
@@ -167,8 +168,8 @@ extension-element-prefixes="exsl"
                 <xsl:copy-of select="exsl:node-set($result-right)//compare/match/*"/>
               </match>
               <mismatch>
-                <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
-                <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
+                  <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
+                  <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
               </mismatch>
             </compare>
           </xsl:if>
@@ -178,6 +179,7 @@ extension-element-prefixes="exsl"
                 <xsl:copy-of select="exsl:node-set($result-left)//tree/match/*"/>
               </match>
               <mismatch>
+                <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
               </mismatch>
             </tree>
             <compare>
@@ -209,26 +211,29 @@ extension-element-prefixes="exsl"
         <xsl:variable name="result-left">
           <xsl:call-template name="splitter">
             <xsl:with-param name="tree" select="exsl:node-set($range-left)/*"/>
-            <xsl:with-param name="comparer" select="exsl:node-set($comparer)"/>
+            <xsl:with-param name="comparer" select="exsl:node-set($comparer)/."/>
           </xsl:call-template>
         </xsl:variable>
         <xsl:variable name="result-right">
           <xsl:call-template name="splitter">
             <xsl:with-param name="tree" select="exsl:node-set($range-right)/*"/>
-            <xsl:with-param name="comparer" select="exsl:node-set($comparer)"/>
+            <xsl:with-param name="comparer" select="exsl:node-set($comparer)/."/>
           </xsl:call-template>
         </xsl:variable>
-        <xsl:if test="exsl:node-set($result-left)//tree/mismatch or exsl:node-set($result-right)//tree/mismatch">
+        <!--result left contains root outside of compare / tree???-->
+        <xsl:if test="(exsl:node-set($result-left)//tree/mismatch/* or exsl:node-set($result-right)//tree/mismatch/* or exsl:node-set($result-left)//compare/mismatch/* or exsl:node-set($result-right)//compare/mismatch/*) and ($swapFlag = 0)">
           <xsl:variable name="result-left-swap">
             <xsl:call-template name="splitter">
               <xsl:with-param name="comparer" select="exsl:node-set($result-right)//compare/mismatch/*"/>
               <xsl:with-param name="tree" select="exsl:node-set($result-left)//tree/mismatch/*"/>
+              <xsl:with-param name="swapFlag" select="1"/>
             </xsl:call-template>
           </xsl:variable>
           <xsl:variable name="result-right-swap">
             <xsl:call-template name="splitter">
               <xsl:with-param name="comparer" select="exsl:node-set($result-left)//compare/mismatch/*"/>
               <xsl:with-param name="tree" select="exsl:node-set($result-right)//tree/mismatch/*"/>
+              <xsl:with-param name="swapFlag" select="1"/>
             </xsl:call-template>
           </xsl:variable>
           <tree>
@@ -252,27 +257,31 @@ extension-element-prefixes="exsl"
             </match>
           </compare>
         </xsl:if>
-        <tree>
-          <mismatch>
-            <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
-            <xsl:copy-of select="exsl:node-set($result-right)//tree/mismatch/*"/>
-          </mismatch>
-          <match>
-            <xsl:copy-of select="exsl:node-set($result-left)//tree/match/*"/>
-            <xsl:copy-of select="exsl:node-set($result-right)//tree/match/*"/>
-          </match>
-        </tree>
-        <compare>
-          <mismatch>
-            <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
-            <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
-          </mismatch>
-          <match>
-            <xsl:copy-of select="exsl:node-set($result-left)//compare/match/*"/>
-            <xsl:copy-of select="exsl:node-set($result-right)//compare/match/*"/>
-          </match>
-        </compare>
-      </xsl:if>
+          <tree>
+            <mismatch>
+              <xsl:if test="not((exsl:node-set($result-left)//tree/mismatch/* or exsl:node-set($result-right)//tree/mismatch/*) and $swapFlag = 0)">
+                <xsl:copy-of select="exsl:node-set($result-left)//tree/mismatch/*"/>
+                <xsl:copy-of select="exsl:node-set($result-right)//tree/mismatch/*"/>
+              </xsl:if>
+            </mismatch>
+            <match>
+              <xsl:copy-of select="exsl:node-set($result-left)//tree/match/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right)//tree/match/*"/>
+            </match>
+          </tree>
+          <compare>
+            <mismatch>
+              <xsl:if test="not((exsl:node-set($result-left)//compare/mismatch/* or exsl:node-set($result-right)//compare/mismatch/*) and $swapFlag = 0)">
+                <xsl:copy-of select="exsl:node-set($result-left)//compare/mismatch/*"/>
+                <xsl:copy-of select="exsl:node-set($result-right)//compare/mismatch/*"/>
+              </xsl:if>
+            </mismatch>
+            <match>
+              <xsl:copy-of select="exsl:node-set($result-left)//compare/match/*"/>
+              <xsl:copy-of select="exsl:node-set($result-right)//compare/match/*"/>
+            </match>
+          </compare>
+        </xsl:if>
     </root>
   </xsl:template>
   <!-- sub function for matching single nodes -->
@@ -291,6 +300,11 @@ extension-element-prefixes="exsl"
           <match>
             <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
           </match>
+        </xsl:if>
+        <xsl:if test="not(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
+          <mismatch>
+            <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
+          </mismatch>
         </xsl:if>
       </xsl:if>
       <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) > 0">
