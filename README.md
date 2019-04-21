@@ -1,6 +1,6 @@
 # xslt-diff-turbo
 Faster implementation of Tree Comparison Algorithm using XSLT 1.0
-
+<code>
 A practical example is below. For instance if file a.xml is compared against file b.xml:
 a.xml
 -------------------------------
@@ -111,3 +111,4 @@ discovered in 12 seconds.
 
 Generally speaking this algorithm as with any tree comparison algorithm performance becomes increasingly though slower.
 Beyond a million nodes versus a similar million nodes xml file, the performance may be impractically slow.
+</code>
