@@ -5,7 +5,7 @@ xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('C:\TFS\Encore Utilities\ConfigurationComparisonLeafy\ConfigurationTransform.Comparison.Test\LiveComparison\lefthand.xml')" />
+  <xsl:variable name="file2" select="document('compareAgainst.xml')" />
   <xsl:template match="comment()"/>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
