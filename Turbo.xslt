@@ -5,13 +5,13 @@ xmlns:exsl="http://exslt.org/common"
 extension-element-prefixes="exsl"
   >
   <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
-  <xsl:variable name="file2" select="document('compareAgainst.xml')" />
+  <xsl:variable name="file2" select="document('C:\Users\Default User.DESKTOP-N6N13D5\Desktop\xslt-diff-turbo-master\compareAgainst.xml')" />
   <xsl:template match="comment()"/>
   <!-- Entry point into transform: file loading and processing occurs here -->
   <xsl:template  match="/">
     <xsl:variable name="IDs2" select="$file2/." />
     <xsl:variable name="output">
-      <xsl:call-template name="splitter">
+      <xsl:call-template name="procedure">
         <xsl:with-param name="tree" select="exsl:node-set(.)/*"/>
         <xsl:with-param name="comparer" select="exsl:node-set($IDs2/.)/*"></xsl:with-param>
       </xsl:call-template>
@@ -31,9 +31,9 @@ extension-element-prefixes="exsl"
     <xsl:param name="tree"/>
     <root>
       <xsl:variable name="linear-comparer">
-        <xsl:call-template name="linearization">
-          <xsl:with-param name="tree" select="exsl:node-set($comparer)/."/>
-        </xsl:call-template>
+            <xsl:call-template name="linearization">
+              <xsl:with-param name="tree" select="exsl:node-set($comparer)/."/>
+            </xsl:call-template>
       </xsl:variable>
       <xsl:variable name="linear-tree">
         <xsl:call-template name="linearization">
@@ -104,13 +104,22 @@ extension-element-prefixes="exsl"
           </xsl:for-each>  
       </xsl:if>    
       <xsl:if test="exsl:node-set($tree)/*">
+        <xsl:variable name="surround"  select="name(exsl:node-set($tree))"/>
         <xsl:for-each select="exsl:node-set($tree)/*">
-          <xsl:element name="{local-name()}">
-          <xsl:call-template name="convert-attribute-to-xml">
-            <xsl:with-param name="linearization" select="."></xsl:with-param>
-          </xsl:call-template>
-          </xsl:element>
+          <xsl:variable name="recurse-leaf">
+                <xsl:call-template name="linearization">
+                  <xsl:with-param name="tree" select="."></xsl:with-param>
+                </xsl:call-template>
+          </xsl:variable>          
+            <xsl:for-each select="exsl:node-set($recurse-leaf)/*"> 
+                        <xsl:element name="{$surround}">
+                          <xsl:copy-of select="."/>
+                        </xsl:element>            
+            </xsl:for-each>
         </xsl:for-each>
+      </xsl:if>
+      <xsl:if test="not(exsl:node-set($tree)/*)">
+        <xsl:copy-of select="exsl:node-set($tree)"/>
       </xsl:if>
   </xsl:template>
   <xsl:template name="convert-attribute-to-xml">
