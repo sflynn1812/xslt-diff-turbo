@@ -40,10 +40,10 @@ extension-element-prefixes="exsl"
           <xsl:with-param name="tree" select="exsl:node-set($tree)/."/>
         </xsl:call-template>
       </xsl:variable>
-      <xsl:for-each select="exsl:node-set($linear-comparer)">
+      <xsl:for-each select="exsl:node-set($linear-comparer)/*">
         <xsl:call-template name="splitter">
           <xsl:with-param name="node" select="."/>
-          <xsl:with-param name="list" select="exsl:node-set($comparer)/*" />
+          <xsl:with-param name="list" select="exsl:node-set($linear-tree)/*" />
         </xsl:call-template>
       </xsl:for-each>
     </root>
@@ -54,15 +54,15 @@ extension-element-prefixes="exsl"
     <xsl:variable name="is-match">
       <xsl:call-template name="match-node">
         <xsl:with-param name="node1" select="exsl:node-set($node)"/>
-        <xsl:with-param name="node2" select="exsl:node-set($list)[0]"/>
+        <xsl:with-param name="node2" select="exsl:node-set($list)[1]"/>
       </xsl:call-template>
     </xsl:variable>
-    <xsl:if test="exsl:node-set($is-match)//match">
-        <xsl:if test="exsl:node-set($node)/* and exsl:node-set($list)[0]/*">
+    <xsl:if test="exsl:node-set($is-match)//match/*">
+        <xsl:if test="exsl:node-set($node)/* and exsl:node-set($list)[1]/*">
           <xsl:variable name="children-match">
             <xsl:call-template name="splitter">
               <xsl:with-param name="node" select="exsl:node-set($node)/*"></xsl:with-param>
-              <xsl:with-param name="list" select="exsl:node-set($list)[0]/*"></xsl:with-param>
+              <xsl:with-param name="list" select="exsl:node-set($list)[1]/*"></xsl:with-param>
             </xsl:call-template>
           </xsl:variable>
           <xsl:if test="not(exsl:node-set($is-match)//mismatch/*)">
@@ -89,7 +89,7 @@ extension-element-prefixes="exsl"
           </xsl:if>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="count(exsl:node-set($list)) > 1 and not(exsl:node-set($is-match)//mismatch/*)">
+      <xsl:if test="count(exsl:node-set($list)) > 1 and exsl:node-set($is-match)//mismatch/*">
         <xsl:call-template name="splitter">
           <xsl:with-param name="node" select="exsl:node-set($node)" />
           <xsl:with-param name="list" select="exsl:node-set($list)[position() > 1 and not(position() > count(exsl:node-set($list)))]"/>
@@ -140,7 +140,7 @@ extension-element-prefixes="exsl"
           <xsl:with-param name="attributes2" select="$node2/@*"></xsl:with-param>
         </xsl:call-template>
       </xsl:variable>
-      <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) = 0">
+      <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) > 0">
         <xsl:if test="(not(exsl:node-set(translate(normalize-space($node1/text()),'&#xa;', ''))) and not(exsl:node-set(translate(normalize-space($node2/text()),'&#xa;', '')))) or (translate(normalize-space($node1/text()),'&#xa;', '') = translate(normalize-space($node2/text()),'&#xa;', ''))">
           <match>
             <xsl:copy-of select="$node1 | @*"></xsl:copy-of>
@@ -152,7 +152,7 @@ extension-element-prefixes="exsl"
           </mismatch>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="count(exsl:node-set($attribute-mismatch)//attribute) > 0">
+      <xsl:if test="count(exsl:node-set($attribute-mismatch)//not-matched-name) > 0">
         <mismatch>
           <xsl:apply-templates mode="copy-no-namespaces" select="$node1 | @*" />
         </mismatch>
@@ -169,8 +169,11 @@ extension-element-prefixes="exsl"
     <xsl:param name="attributes1" />
     <xsl:param name="attributes2" />
     <attribute-match>
+      <xsl:if test="(count($attributes1) = 0 and count($attributes2) = 0)">
+        <attribute/>
+      </xsl:if>
       <xsl:if test="(count($attributes1) != count($attributes2))">
-        <attribute />
+        <not-matched-name/>
       </xsl:if>
       <xsl:if test="(count($attributes1) = count($attributes2))">
         <xsl:for-each select="$attributes1">
