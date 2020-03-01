@@ -6,82 +6,82 @@ Faster&nbsp;implementation&nbsp;of&nbsp;Tree&nbsp;Comparison&nbsp;Algorithm&nbsp
 A&nbsp;practical&nbsp;example&nbsp;is&nbsp;below.&nbsp;For&nbsp;instance&nbsp;if&nbsp;file&nbsp;a.xml&nbsp;is&nbsp;compared&nbsp;against&nbsp;file&nbsp;b.xml:<br/>
 a.xml<br/>
 -------------------------------<br/>
-&lt;a&gt;
-  &lt;b&gt;
-    &lt;b&gt;b&lt;/b&gt;
-    &lt;d&gt;c&lt;/d&gt;
-  &lt;/b&gt;
-  &lt;d&gt;d&lt;/d&gt;
-  &lt;e&gt;e&lt;/e&gt;
+&lt;a&gt;<br/>
+  &lt;b&gt;<br/>
+    &lt;b&gt;b&lt;/b&gt;<br/>
+    &lt;d&gt;c&lt;/d&gt;<br/>
+  &lt;/b&gt;<br/>
+  &lt;d&gt;d&lt;/d&gt;<br/>
+  &lt;e&gt;e&lt;/e&gt;<br/>
 &lt;/a&gt;<br/>
 <br/>
 b.xml<br/>
 -------------------------------<br/>
-&lt;a&gt;
-  &lt;b&gt;
-    &lt;b&gt;b&lt;/b&gt;
-    &lt;d&gt;c&lt;/d&gt;
-  &lt;/b&gt;
-  &lt;d&gt;d&lt;/d&gt;
-  &lt;g&gt;g&lt;/g&gt;
-&lt;/a&gt;
+&lt;a&gt;<br/>
+  &lt;b&gt;<br/>
+    &lt;b&gt;b&lt;/b&gt;<br/>
+    &lt;d&gt;c&lt;/d&gt;<br/>
+  &lt;/b&gt;<br/>
+  &lt;d&gt;d&lt;/d&gt;<br/>
+  &lt;g&gt;g&lt;/g&gt;<br/>
+&lt;/a&gt;<br/>
 The&nbsp;output&nbsp;would&nbsp;be&nbsp;as&nbsp;shown&nbsp;below,&nbsp;with&nbsp;the&nbsp;mismatches&nbsp;in&nbsp;a.xml&nbsp;not&nbsp;list&nbsp;in&nbsp;b.xml&nbsp;within&nbsp;tree-&gt;mismatch.&nbsp;&nbsp;The&nbsp;mismatches&nbsp;between&nbsp;b.xml&nbsp;not<br/>
 not&nbsp;in&nbsp;a.xml&nbsp;under&nbsp;compare-&gt;mismatch:<br/>
-&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;root&gt;
-  &lt;root&gt;
-    &lt;left-not-in-right&gt;
-      &lt;match&gt;
-        &lt;a&gt;
-          &lt;b&gt;
-            &lt;b&gt;b&lt;/b&gt;
-          &lt;/b&gt;
-        &lt;/a&gt;
-      &lt;/match&gt;
-      &lt;match&gt;
-        &lt;a&gt;
-          &lt;b&gt;
-            &lt;d&gt;c&lt;/d&gt;
-          &lt;/b&gt;
-        &lt;/a&gt;
-      &lt;/match&gt;
-      &lt;match&gt;
-        &lt;a&gt;
-          &lt;d&gt;d&lt;/d&gt;
-        &lt;/a&gt;
-      &lt;/match&gt;
-      &lt;mismatch&gt;
-        &lt;a&gt;
-          &lt;g&gt;g&lt;/g&gt;
-        &lt;/a&gt;
-      &lt;/mismatch&gt;
-    &lt;/left-not-in-right&gt;
-    &lt;right-not-in-left&gt;
-      &lt;match&gt;
-        &lt;a&gt;
-          &lt;b&gt;
-            &lt;b&gt;b&lt;/b&gt;
-          &lt;/b&gt;
-        &lt;/a&gt;
-      &lt;/match&gt;
-      &lt;match&gt;
-        &lt;a&gt;
-          &lt;b&gt;
-            &lt;d&gt;c&lt;/d&gt;
-          &lt;/b&gt;
-        &lt;/a&gt;
-      &lt;/match&gt;
-      &lt;match&gt;
-        &lt;a&gt;
-          &lt;d&gt;d&lt;/d&gt;
-        &lt;/a&gt;
-      &lt;/match&gt;
-      &lt;mismatch&gt;
-        &lt;a&gt;
-          &lt;e&gt;e&lt;/e&gt;
-        &lt;/a&gt;
-      &lt;/mismatch&gt;
-    &lt;/right-not-in-left&gt;
-  &lt;/root&gt;
-&lt;/root&gt;
+&lt;?xml version="1.0" encoding="utf-8"?&gt;<br/>
+&lt;root&gt;<br/>
+  &lt;root&gt;<br/>
+    &lt;left-not-in-right&gt;<br/>
+      &lt;match&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;b&gt;<br/>
+            &lt;b&gt;b&lt;/b&gt;<br/>
+          &lt;/b&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/match&gt;<br/>
+      &lt;match&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;b&gt;<br/>
+            &lt;d&gt;c&lt;/d&gt;<br/>
+          &lt;/b&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/match&gt;<br/>
+      &lt;match&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;d&gt;d&lt;/d&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/match&gt;<br/>
+      &lt;mismatch&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;g&gt;g&lt;/g&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/mismatch&gt;<br/>
+    &lt;/left-not-in-right&gt;<br/>
+    &lt;right-not-in-left&gt;<br/>
+      &lt;match&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;b&gt;<br/>
+            &lt;b&gt;b&lt;/b&gt;<br/>
+          &lt;/b&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/match&gt;<br/>
+      &lt;match&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;b&gt;<br/>
+            &lt;d&gt;c&lt;/d&gt;<br/>
+          &lt;/b&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/match&gt;<br/>
+      &lt;match&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;d&gt;d&lt;/d&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/match&gt;<br/>
+      &lt;mismatch&gt;<br/>
+        &lt;a&gt;<br/>
+          &lt;e&gt;e&lt;/e&gt;<br/>
+        &lt;/a&gt;<br/>
+      &lt;/mismatch&gt;<br/>
+    &lt;/right-not-in-left&gt;<br/>
+  &lt;/root&gt;<br/>
+&lt;/root&gt;<br/>
 <br/>
