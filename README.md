@@ -25,8 +25,7 @@ b.xml<br/>
   &nbsp;&nbsp;&lt;d&gt;d&lt;/d&gt;<br/>
   &nbsp;&nbsp;&lt;g&gt;g&lt;/g&gt;<br/>
 &lt;/a&gt;<br/>
-The&nbsp;output&nbsp;would&nbsp;be&nbsp;as&nbsp;shown&nbsp;below,&nbsp;with&nbsp;the&nbsp;mismatches&nbsp;in&nbsp;a.xml&nbsp;not&nbsp;list&nbsp;in&nbsp;b.xml&nbsp;within&nbsp;tree-&gt;mismatch.&nbsp;&nbsp;The&nbsp;mismatches&nbsp;between&nbsp;b.xml&nbsp;not<br/>
-not&nbsp;in&nbsp;a.xml&nbsp;under&nbsp;compare-&gt;mismatch:<br/>
+Results in:<br/>
 &lt;?xml version="1.0" encoding="utf-8"?&gt;<br/>
 &lt;root&gt;<br/>
   &nbsp;&nbsp;&lt;root&gt;<br/>
