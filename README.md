@@ -7,80 +7,80 @@ A&nbsp;practical&nbsp;example&nbsp;is&nbsp;below.&nbsp;For&nbsp;instance&nbsp;if
 a.xml<br/>
 -------------------------------<br/>
 &lt;a&gt;<br/>
-  &lt;b&gt;<br/>
-    &lt;b&gt;b&lt;/b&gt;<br/>
-    &lt;d&gt;c&lt;/d&gt;<br/>
-  &lt;/b&gt;<br/>
-  &lt;d&gt;d&lt;/d&gt;<br/>
-  &lt;e&gt;e&lt;/e&gt;<br/>
-&lt;/a&gt;<br/>
+  &nbsp;&nbsp;&lt;b&gt;<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;b&lt;/b&gt;<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&lt;d&gt;c&lt;/d&gt;<br/>
+  &nbsp;&nbsp;&lt;/b&gt;<br/>
+  &nbsp;&nbsp;&lt;d&gt;d&lt;/d&gt;<br/>
+  &nbsp;&nbsp;&lt;e&gt;e&lt;/e&gt;<br/>
+&nbsp;&nbsp;&lt;/a&gt;<br/>
 <br/>
 b.xml<br/>
 -------------------------------<br/>
 &lt;a&gt;<br/>
-  &lt;b&gt;<br/>
-    &lt;b&gt;b&lt;/b&gt;<br/>
-    &lt;d&gt;c&lt;/d&gt;<br/>
-  &lt;/b&gt;<br/>
-  &lt;d&gt;d&lt;/d&gt;<br/>
-  &lt;g&gt;g&lt;/g&gt;<br/>
+  &nbsp;&nbsp;&lt;b&gt;<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;b&lt;/b&gt;<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&lt;d&gt;c&lt;/d&gt;<br/>
+  &nbsp;&nbsp;&lt;/b&gt;<br/>
+  &nbsp;&nbsp;&lt;d&gt;d&lt;/d&gt;<br/>
+  &nbsp;&nbsp;&lt;g&gt;g&lt;/g&gt;<br/>
 &lt;/a&gt;<br/>
 The&nbsp;output&nbsp;would&nbsp;be&nbsp;as&nbsp;shown&nbsp;below,&nbsp;with&nbsp;the&nbsp;mismatches&nbsp;in&nbsp;a.xml&nbsp;not&nbsp;list&nbsp;in&nbsp;b.xml&nbsp;within&nbsp;tree-&gt;mismatch.&nbsp;&nbsp;The&nbsp;mismatches&nbsp;between&nbsp;b.xml&nbsp;not<br/>
 not&nbsp;in&nbsp;a.xml&nbsp;under&nbsp;compare-&gt;mismatch:<br/>
 &lt;?xml version="1.0" encoding="utf-8"?&gt;<br/>
 &lt;root&gt;<br/>
-  &lt;root&gt;<br/>
-    &lt;left-not-in-right&gt;<br/>
-      &lt;match&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;b&gt;<br/>
-            &lt;b&gt;b&lt;/b&gt;<br/>
-          &lt;/b&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/match&gt;<br/>
-      &lt;match&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;b&gt;<br/>
-            &lt;d&gt;c&lt;/d&gt;<br/>
-          &lt;/b&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/match&gt;<br/>
-      &lt;match&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;d&gt;d&lt;/d&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/match&gt;<br/>
-      &lt;mismatch&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;g&gt;g&lt;/g&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/mismatch&gt;<br/>
+  &nbsp;&nbsp;&lt;root&gt;<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&lt;left-not-in-right&gt;<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;match&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;b&lt;/b&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/match&gt;<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;match&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;d&gt;c&lt;/d&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/match&gt;<br/>
+      &nbsp;&nbsp;&lt;match&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;d&gt;d&lt;/d&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/match&gt;<br/>
+      &nbsp;&nbsp;&lt;mismatch&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;g&gt;g&lt;/g&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/mismatch&gt;<br/>
     &lt;/left-not-in-right&gt;<br/>
     &lt;right-not-in-left&gt;<br/>
-      &lt;match&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;b&gt;<br/>
-            &lt;b&gt;b&lt;/b&gt;<br/>
-          &lt;/b&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/match&gt;<br/>
-      &lt;match&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;b&gt;<br/>
-            &lt;d&gt;c&lt;/d&gt;<br/>
-          &lt;/b&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/match&gt;<br/>
-      &lt;match&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;d&gt;d&lt;/d&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/match&gt;<br/>
-      &lt;mismatch&gt;<br/>
-        &lt;a&gt;<br/>
-          &lt;e&gt;e&lt;/e&gt;<br/>
-        &lt;/a&gt;<br/>
-      &lt;/mismatch&gt;<br/>
+      &nbsp;&nbsp;&lt;match&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;b&lt;/b&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/match&gt;<br/>
+      &nbsp;&nbsp;&lt;match&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;b&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;d&gt;c&lt;/d&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/match&gt;<br/>
+      &nbsp;&nbsp;&lt;match&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;d&gt;d&lt;/d&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/match&gt;<br/>
+      &nbsp;&nbsp;&lt;mismatch&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&gt;<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;e&gt;e&lt;/e&gt;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;<br/>
+      &nbsp;&nbsp;&lt;/mismatch&gt;<br/>
     &lt;/right-not-in-left&gt;<br/>
   &lt;/root&gt;<br/>
 &lt;/root&gt;<br/>
