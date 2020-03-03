@@ -102,6 +102,11 @@ extension-element-prefixes="exsl"
                 </xsl:call-template>
               </xsl:if>
             </xsl:if>
+            <xsl:if test="count(exsl:node-set($list)) = 1">
+                <mismatch>
+                  <xsl:copy-of select="exsl:node-set($node)[1]"/>
+                </mismatch>                
+            </xsl:if>
           </xsl:if>
           <xsl:if test="count(exsl:node-set($node)) > 1 and exsl:node-set($is-match)//match/* and exsl:node-set($children-match)//match/*">
             <xsl:call-template name="splitter">
@@ -147,11 +152,6 @@ extension-element-prefixes="exsl"
   </xsl:template>
   <xsl:template name="linearization">
     <xsl:param name="tree"/>
-      <xsl:if test="exsl:node-set($tree)/@*">
-          <xsl:for-each select="exsl:node-set($tree)/@*">
-            <xsl:call-template name="convert-attribute-to-xml"></xsl:call-template>
-          </xsl:for-each>  
-      </xsl:if>    
       <xsl:if test="exsl:node-set($tree)/*">
         <xsl:variable name="surround"  select="name(exsl:node-set($tree))"/>
         <xsl:for-each select="exsl:node-set($tree)/*">
@@ -162,6 +162,11 @@ extension-element-prefixes="exsl"
           </xsl:variable>          
             <xsl:for-each select="exsl:node-set($recurse-leaf)/*"> 
                         <xsl:element name="{$surround}">
+                          <xsl:for-each select="exsl:node-set($tree)/@*">
+                            <xsl:attribute name="{name(.)}">
+                              <xsl:value-of select="."/>
+                            </xsl:attribute>
+                          </xsl:for-each>
                           <xsl:copy-of select="."/>
                         </xsl:element>            
             </xsl:for-each>
@@ -241,7 +246,7 @@ extension-element-prefixes="exsl"
               </xsl:for-each>
             </attroot>
           </xsl:variable>
-          <xsl:if test="count(exsl:node-set($result)//not-matched-name) = count(exsl:node-set($attributes2))">
+          <xsl:if test="count(exsl:node-set($result)//not-matched-name) = (count(exsl:node-set($attributes2)) - 1)">
             <attribute />
           </xsl:if>
         </xsl:for-each>
