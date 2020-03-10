@@ -150,6 +150,7 @@ extension-element-prefixes="exsl"
       </xsl:if>
     </xsl:if>
   </xsl:template>
+  <!-- The linearization function basically outputs a list of nodes that trace from the leaf back to the root, which is a better expression to compare against  -->
   <xsl:template name="linearization">
     <xsl:param name="tree"/>
       <xsl:if test="exsl:node-set($tree)/*">
