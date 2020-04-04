@@ -102,11 +102,11 @@ extension-element-prefixes="exsl"
                 </xsl:call-template>                
               </xsl:if>
               <xsl:if test="exsl:node-set($elsewhere2)//match/*">
-                <xsl:copy-of select="$elsewhere2 | @*"/>
+                <xsl:copy-of select="exsl:node-set($elsewhere2) | @*"/>
               </xsl:if>
             </xsl:if>
             <xsl:if test="exsl:node-set($elsewhere1)//match/*">
-              <xsl:copy-of select="$elsewhere1 | @*"/>
+              <xsl:copy-of select="exsl:node-set($elsewhere1) | @*"/>
             </xsl:if>
           </xsl:variable>
               <xsl:if test="not(exsl:node-set($elsewhere)//match/*)">
