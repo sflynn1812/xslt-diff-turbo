@@ -98,6 +98,11 @@ extension-element-prefixes="exsl"
                   </xsl:attribute>
                   <xsl:copy-of select="$node[1] | @*"/>
                 </mismatch>
+              <xsl:call-template name="splitter">
+                      <xsl:with-param name="node" select="exsl:node-set($node)[position()  > 1]" />
+                      <xsl:with-param name="list" select="exsl:node-set($list)"/>
+                      <xsl:with-param name="base-position" select="$base-position + 1"/>
+              </xsl:call-template>
             </xsl:if>
             <xsl:if test="count(exsl:node-set($list)) > 1">
           <xsl:variable name="elsewhere">
