@@ -1,0 +1,50 @@
+﻿<root>
+	<root>
+		<left-not-in-right>
+			<match position="1">
+				<a>
+					<b>
+						<c>a</c>
+					</b>
+				</a>
+			</match>
+			<match position="2">
+				<a>
+					<b>
+						<c>a</c>
+					</b>
+				</a>
+			</match>
+			<match position="3">
+				<a>
+					<b>
+						<e e="e">b</e>
+					</b>
+				</a>
+			</match>
+		</left-not-in-right>
+		<right-not-in-left>
+			<match position="1">
+				<a>
+					<b>
+						<c>a</c>
+					</b>
+				</a>
+			</match>
+			<match position="2">
+				<a>
+					<b>
+						<e e="e">b</e>
+					</b>
+				</a>
+			</match>
+			<match position="3">
+				<a>
+					<b>
+						<c>a</c>
+					</b>
+				</a>
+			</match>
+		</right-not-in-left>
+	</root>
+</root>

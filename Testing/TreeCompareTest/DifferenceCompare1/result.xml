@@ -1,0 +1,113 @@
+﻿<root>
+	<root>
+		<left-not-in-right>
+			<match position="1">
+				<configuration>
+					<configSections>
+						<section name="MyConfiguration" requirePermission="false" type="System.Configuration.NameValueSectionHandler,System,Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+					</configSections>
+				</configuration>
+			</match>
+			<match position="2">
+				<configuration>
+					<MyConfiguration>
+						<add key="ApplicationName" value="Configuration Tests" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="3">
+				<configuration>
+					<MyConfiguration>
+						<add key="DebugMode" value="Default" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="4">
+				<configuration>
+					<MyConfiguration>
+						<add key="MaxDisplayListItems" value="15" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="5">
+				<configuration>
+					<MyConfiguration>
+						<add key="SendAdminEmailConfirmations" value="False" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="6">
+				<configuration>
+					<MyConfiguration>
+						<add key="MailServer" value="mail.MyWickedServer.com:334" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="7">
+				<configuration>
+					<MyConfiguration>
+						<add key="MailServerPassword" value="seekrity" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+		</left-not-in-right>
+		<right-not-in-left>
+			<match position="1">
+				<configuration>
+					<configSections>
+						<section name="MyConfiguration" requirePermission="false" type="System.Configuration.NameValueSectionHandler,System,Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+					</configSections>
+				</configuration>
+			</match>
+			<match position="2">
+				<configuration>
+					<MyConfiguration>
+						<add key="ApplicationName" value="Configuration Tests" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="3">
+				<configuration>
+					<MyConfiguration>
+						<add key="DebugMode" value="Default" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="4">
+				<configuration>
+					<MyConfiguration>
+						<add key="MaxDisplayListItems" value="15" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="5">
+				<configuration>
+					<MyConfiguration>
+						<add key="SendAdminEmailConfirmations" value="False" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<mismatch position="6">
+				<configuration>
+					<MyConfiguration>
+						<add key="needle" value="inAHayStack" />
+					</MyConfiguration>
+				</configuration>
+			</mismatch>
+			<match position="7">
+				<configuration>
+					<MyConfiguration>
+						<add key="MailServer" value="mail.MyWickedServer.com:334" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+			<match position="8">
+				<configuration>
+					<MyConfiguration>
+						<add key="MailServerPassword" value="seekrity" />
+					</MyConfiguration>
+				</configuration>
+			</match>
+		</right-not-in-left>
+	</root>
+</root>
