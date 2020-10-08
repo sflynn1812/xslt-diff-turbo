@@ -156,27 +156,11 @@ extension-element-prefixes="exsl"
                 </mismatch>
                 <xsl:if test="count(exsl:node-set($node)) > 1">
                   <!-- iterate to the next head variable using a different divide and conquer technique -->
-                  <xsl:if test="exsl:node-set($node)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($node)) div 3))]">
                     <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($node)) div 3))]" />
+                      <xsl:with-param name="node" select="exsl:node-set($node)[position()  > 1]" />
                       <xsl:with-param name="list" select="exsl:node-set($list)"/>
                       <xsl:with-param name="base-position" select="$base-position + 1"/>
                     </xsl:call-template>
-                  </xsl:if>
-                  <xsl:if test="exsl:node-set($node)[position() > 1+ (count(exsl:node-set($node)) div 3) and not((position()) > 1 + (count(exsl:node-set($node)) div (3 div 2)))]">
-                    <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[position() >  1 + (count(exsl:node-set($node)) div 3) and not((position()) > 1 + (count(exsl:node-set($node)) div (3 div 2)))]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1 + floor(count(exsl:node-set($node)) div 3)"/>
-                    </xsl:call-template>
-                  </xsl:if>
-                  <xsl:if test="exsl:node-set($node)[position() > 1 + (count(exsl:node-set($node)) div (3 div 2))]">
-                    <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[position() > 1 + (count(exsl:node-set($node)) div (3 div 2))]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1 + floor(count(exsl:node-set($node)) div (3 div 2))"/>
-                    </xsl:call-template>
-                  </xsl:if>
                 </xsl:if>
               </xsl:if>
               <xsl:if test="exsl:node-set($elsewhere)//match/*">
