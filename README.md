@@ -1,3 +1,5 @@
+Warning: has edge cases that do not work. New version under construction.
+
 #&nbsp;xslt-diff-turbo
 
 Faster&nbsp;implementation&nbsp;of&nbsp;Tree&nbsp;Comparison&nbsp;Algorithm&nbsp;using&nbsp;XSLT&nbsp;1.0<br/>
