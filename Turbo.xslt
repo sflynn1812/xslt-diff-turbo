@@ -37,14 +37,14 @@ extension-element-prefixes="exsl"
         </xsl:call-template>
       </xsl:variable>
       <left-not-in-right>
-        <xsl:call-template name="splitter">
+        <xsl:call-template name="linearBranchLoop">
           <xsl:with-param name="node" select="exsl:node-set($linear-comparer)/*"/>
           <xsl:with-param name="list" select="exsl:node-set($linear-tree)/*" />
           <xsl:with-param name="base-position" select="1"/>
         </xsl:call-template>
       </left-not-in-right>
       <right-not-in-left>
-        <xsl:call-template name="splitter">
+        <xsl:call-template name="linearBranchLoop">
           <xsl:with-param name="node" select="exsl:node-set($linear-tree)/*"/>
           <xsl:with-param name="list" select="exsl:node-set($linear-comparer)/*" />
           <xsl:with-param name="base-position" select="1"/>
@@ -52,232 +52,83 @@ extension-element-prefixes="exsl"
       </right-not-in-left>
     </root>
   </xsl:template>
-  <xsl:template name="splitter">
-    <xsl:param name="node"></xsl:param>
+  <xsl:template name="linearBranchLoop">
+	<xsl:param name="node"></xsl:param>
     <xsl:param name="list"></xsl:param>
-    <xsl:param name="base-position"></xsl:param>
-    <xsl:if test="count(exsl:node-set($node)) = 0 or not($node)">
-      <!-- no nodes left to compare -->
-      <mismatch/>
-    </xsl:if>
-    <xsl:if test="count(exsl:node-set($list)) = 0 or not($list)">
-      <!-- the xml node being searched for is an orphan -->
-      <mismatch>
-        <xsl:attribute name="position">
-          <xsl:value-of select="$base-position"/>
-        </xsl:attribute>
-        <xsl:copy-of select="$node | @*"/>
-      </mismatch>
-    </xsl:if>
-    <xsl:if test="count(exsl:node-set($list)) > 0 and count(exsl:node-set($node)) > 0">
-      <!-- check if the current head of both trees are a match -->
-      <xsl:variable name="is-match">
-        <xsl:call-template name="match-node">
-          <xsl:with-param name="node1" select="exsl:node-set($node)[1]"/>
-          <xsl:with-param name="node2" select="exsl:node-set($list)[1]"/>
+    <xsl:for-each select="exsl:node-set($node)/*">
+        <xsl:call-template name="divideAndConquer">
+	        <xsl:with-param name="node" select="." />
+		    <xsl:with-param name="list" select="exsl:node-set($list)"/>
         </xsl:call-template>
-      </xsl:variable>
-      <xsl:if test="exsl:node-set($is-match)//match/* and exsl:node-set($node)[1]/*">
-        <xsl:if test="exsl:node-set($node)[1]/* and exsl:node-set($list)[1]/*">
-        <!-- the current heads of the node trees match but it needs to check which children within the match contain matches -->
-          <xsl:variable name="children-match">
-            <xsl:call-template name="splitter">
-              <xsl:with-param name="node" select="exsl:node-set($node)[1]/*"></xsl:with-param>
-              <xsl:with-param name="list" select="exsl:node-set($list)[1]/*"></xsl:with-param>
-              <xsl:with-param name="base-position" select="$base-position"></xsl:with-param>
-            </xsl:call-template>
-          </xsl:variable>
-          <xsl:if test="exsl:node-set($children-match)//match/*">
-            <!-- children from root to leaf match therefore this branch matches -->
-            <match>
-              <xsl:attribute name="position">
-                <xsl:value-of select="$base-position"/>
-              </xsl:attribute>
-              <xsl:copy-of select="$node[1] | @*"/>
-            </match>
-          </xsl:if>
-          <xsl:if test="not(exsl:node-set($children-match)//match/*)">
-            <xsl:if test="count(exsl:node-set($list)) = 1">
-              <!-- children did not match and this is the last item to search against therefore this the head node is orphaned -->
-                <mismatch>
-                  <xsl:attribute name="position">
-                    <xsl:value-of select="$base-position"/>
-                  </xsl:attribute>
-                  <xsl:copy-of select="$node[1] | @*"/>
-                </mismatch>
-              <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[position()  > 1]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1"/>
-              </xsl:call-template>
+    </xsl:for-each>  
+  </xsl:template>
+  <xsl:template name="divideAndConquer">
+	  <xsl:param name="node"></xsl:param>
+	  <xsl:param name="list"></xsl:param>
+	  <xsl:if test="count(exsl:node-set($list)) = 1">
+	    <xsl:call-template name="branchToChildMatch"></xsl:call-template>
+	  </xsl:if>
+	  <xsl:if test="count(exsl:node-set($list)) > 1">
+		<xsl:variable name="elsewhere2">
+		<xsl:variable name="elsewhere1">
+		    <xsl:if test="exsl:node-set($list)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($node)) div 3))]">
+			    <xsl:call-template name="divideAndConquer">
+				    <xsl:with-param name="node" select="exsl:node-set($node)" />
+				    <xsl:with-param name="list" select="exsl:node-set($list)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($node)) div 3))]"/>
+			    </xsl:call-template>
+		    </xsl:if>
+		</xsl:variable>
+	    <xsl:if test="not(exsl:node-set($elsewhere1)//match/*) and exsl:node-set($list)[position() > 1+ (count(exsl:node-set($list)) div 3) and not((position()) > 1 + (count(exsl:node-set($list)) div (3 div 2)))]">
+			<xsl:call-template name="divideAndConquer">
+				<xsl:with-param name="node" select="exsl:node-set($node)" />
+				<xsl:with-param name="list" select="exsl:node-set($list)[position() > 1+ (count(exsl:node-set($list)) div 3) and not((position()) > 1 + (count(exsl:node-set($list)) div (3 div 2)))]"/>
+			</xsl:call-template>
+		</xsl:if>
+		<xsl:copy-of select="$elsewhere1 | @*"/>
+		</xsl:variable>
+		<xsl:copy-of select="$elsewhere2 | @*"/>
+		<xsl:if test="not(exsl:node-set($elsewhere2)//match/*) and exsl:node-set($list)[position() > 1 + (count(exsl:node-set($list)) div (3 div 2))]">
+		    <xsl:call-template name="divideAndConquer">
+			     <xsl:with-param name="node" select="exsl:node-set($node)" />
+			     <xsl:with-param name="list" select="exsl:node-set($list)[position() > 1 + (count(exsl:node-set($list)) div (3 div 2))]"/>
+			</xsl:call-template>
+		</xsl:if>
+	  </xsl:if>
+  </xsl:template>
+  <xsl:template name="branchToChildMatch">
+        <xsl:param name="nodeLeft"></xsl:param>
+        <xsl:param name="nodeRight"></xsl:param>
+        <xsl:variable name="is-match">
+	        <xsl:call-template name="match-node">
+	            <xsl:with-param name="node1" select="exsl:node-set($nodeLeft)"/>
+			    <xsl:with-param name="node2" select="exsl:node-set($nodeRight)"/>
+		    </xsl:call-template>
+		</xsl:variable>
+	    <xsl:if test="exsl:node-set($is-match)//match/*">
+	        <xsl:if test="exsl:node-set($nodeLeft)/*">
+				<xsl:if test="xsl:node-set($nodeRight)/*">
+			        <xsl:call-template name="branchToChildMatch">
+		                <xsl:with-param name="nodeLeft" select="exsl:node-set($nodeLeft)/*"/>
+			            <xsl:with-param name="nodeRight" select="exsl:node-set($nodeRight)/*"/>
+		            </xsl:call-template>
+				</xsl:if>
+			    <xsl:if test="not(xsl:node-set($nodeRight)/*)">
+					<mismatch>
+						<xsl:copy-of select="$nodeLeft | @*"/>
+				    </mismatch>
+			    </xsl:if>
             </xsl:if>
-          <xsl:if test="count(exsl:node-set($list)) > 1">
-          <!-- children do not match but there are more branches in the tree to search -->
-          <!-- the results of the divide and conquer scheme get put in the elsewhere variable -->
-          <xsl:variable name="elsewhere">
-            <xsl:variable name="elsewhere1">
-              <xsl:call-template name="splitter">
-                <xsl:with-param name="node" select="exsl:node-set($node)[1]" />
-                <xsl:with-param name="list" select="exsl:node-set($list)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($list)) div 3))]"/>
-                <xsl:with-param name="base-position" select="$base-position"/>
-              </xsl:call-template>
-            </xsl:variable>
-            <!-- the search elsewhere is divided and conquered to avoid stack oveflow -->
-            <xsl:if test="not(exsl:node-set($elsewhere1)//match/*)">
-              <xsl:variable name="elsewhere2">
-                <xsl:call-template name="splitter">
-                  <xsl:with-param name="node" select="exsl:node-set($node)[1]" />
-                  <xsl:with-param name="list" select="exsl:node-set($list)[position() > 1 + (count(exsl:node-set($list)) div 3) and not((position()) > 1 + (count(exsl:node-set($list)) div (3 div 2)))]"/>
-                  <xsl:with-param name="base-position" select="$base-position"/>
-                </xsl:call-template>
-              </xsl:variable>
-              <xsl:if test="not(exsl:node-set($elsewhere2)//match/*)">
-                <!-- head is not in the first half of the list tree, so look in the second half -->
-                <xsl:call-template name="splitter">
-                  <xsl:with-param name="node" select="exsl:node-set($node)[1]" />
-                  <xsl:with-param name="list" select="exsl:node-set($list)[position() > 1 + (count(exsl:node-set($list)) div (3 div 2))]"/>
-                  <xsl:with-param name="base-position" select="$base-position"/>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:if test="exsl:node-set($elsewhere2)//match/*">
-                <xsl:copy-of select="exsl:node-set($elsewhere2) | @*"/>
-              </xsl:if>
-            </xsl:if>
-            <xsl:if test="exsl:node-set($elsewhere1)//match/*">
-              <xsl:copy-of select="exsl:node-set($elsewhere1) | @*"/>
-            </xsl:if>
-          </xsl:variable>
-              <xsl:if test="not(exsl:node-set($elsewhere)//match/*)">
-                <mismatch>
-                  <xsl:attribute name="position">
-                    <xsl:value-of select="$base-position"/>
-                  </xsl:attribute>
-                  <xsl:copy-of select="$node[1] | @*"/>
-                </mismatch>
-                <xsl:if test="count(exsl:node-set($node)) > 1">
-                  <!-- iterate to the next head variable using a different divide and conquer technique -->
-                    <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[position()  > 1]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1"/>
-                    </xsl:call-template>
-                </xsl:if>
-              </xsl:if>
-              <xsl:if test="exsl:node-set($elsewhere)//match/*">
-                <match>
-                  <xsl:attribute name="position">
-                    <xsl:value-of select="$base-position"/>
-                  </xsl:attribute>
-                  <xsl:copy-of select="$node[1] | @*"/>
-                </match>
-                <xsl:if test="count(exsl:node-set($node)) > 1">
-                  <xsl:if test="exsl:node-set($node)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($node)) div 3))]">
-                    <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[(position())  > 1 and not((position()) > 1 + (count(exsl:node-set($node)) div 3))]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)[position() != exsl:node-set($elsewhere)//match/@position]"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1"/>
-                    </xsl:call-template>
-                  </xsl:if>
-                  <xsl:if test="exsl:node-set($node)[position() > 1+ (count(exsl:node-set($node)) div 3) and not((position()) > 1 + (count(exsl:node-set($node)) div (3 div 2)))]">
-                    <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[position() >  1 + (count(exsl:node-set($node)) div 3) and not((position()) > 1 + (count(exsl:node-set($node)) div (3 div 2)))]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)[position() != exsl:node-set($elsewhere)//match/@position]"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1 + floor(count(exsl:node-set($node)) div 3)"/>
-                    </xsl:call-template>
-                  </xsl:if>
-                  <xsl:if test="exsl:node-set($node)[position() > 1 + (count(exsl:node-set($node)) div (3 div 2))]">
-                    <xsl:call-template name="splitter">
-                      <xsl:with-param name="node" select="exsl:node-set($node)[position() > 1 + (count(exsl:node-set($node)) div (3 div 2))]" />
-                      <xsl:with-param name="list" select="exsl:node-set($list)[position() != exsl:node-set($elsewhere)//match/@position]"/>
-                      <xsl:with-param name="base-position" select="$base-position + 1 + floor(count(exsl:node-set($node)) div (3 div 2))"/>
-                    </xsl:call-template>
-                  </xsl:if>
-                </xsl:if>
-              </xsl:if>
-            </xsl:if>
-          </xsl:if>
-          <xsl:if test="count(exsl:node-set($node)) > 1 and exsl:node-set($children-match)//match/*">
-            <xsl:call-template name="splitter">
-              <xsl:with-param name="node" select="exsl:node-set($node)[position() > 1 and not(position() > count(exsl:node-set($node)))]" />
-              <xsl:with-param name="list" select="exsl:node-set($list)[position() > 1 and not(position() > count(exsl:node-set($list)))]" />
-              <xsl:with-param name="base-position" select="$base-position + 1"/>
-            </xsl:call-template>
-          </xsl:if>
-        </xsl:if>
-      </xsl:if>
-      <xsl:if test="not(exsl:node-set($node)[1]/*)">
-        <xsl:if test="exsl:node-set($is-match)//match/*">
-          <match>
-            <xsl:attribute name="position">
-              <xsl:value-of select="$base-position"/>
-            </xsl:attribute>
-            <xsl:copy-of select="$node[1] | @*"/>
-          </match>
-        </xsl:if>
-        <xsl:if test="exsl:node-set($is-match)//mismatch/*">
-          <xsl:variable name="elsewhere">
-            <xsl:variable name="elsewhere1">
-              <xsl:call-template name="splitter">
-                <xsl:with-param name="node" select="exsl:node-set($node)[1]" />
-                <xsl:with-param name="list" select="exsl:node-set($list)[(position())  > 1 and not((position()) >= ((count(exsl:node-set($list)) div 3)) + 1)]"/>
-                <xsl:with-param name="base-position" select="$base-position"/>
-              </xsl:call-template>
-            </xsl:variable>
-            <xsl:if test="not(exsl:node-set($elsewhere1)//match/*)">
-              <xsl:variable name="elsewhere2">
-                <xsl:call-template name="splitter">
-                  <xsl:with-param name="node" select="exsl:node-set($node)[1]" />
-                  <xsl:with-param name="list" select="exsl:node-set($list)[position() >= ((count(exsl:node-set($list)) div 3) + 1) and not((position()) >= ((count(exsl:node-set($list)) div (3 div 2)) + 1))]"/>
-                  <xsl:with-param name="base-position" select="$base-position"/>
-                </xsl:call-template>
-              </xsl:variable>
-              <xsl:if test="not(exsl:node-set($elsewhere2)//match/*)">
-                <xsl:call-template name="splitter">
-                  <xsl:with-param name="node" select="exsl:node-set($node)[1]" />
-                  <xsl:with-param name="list" select="exsl:node-set($list)[position() >= ((count(exsl:node-set($list)) div (3 div 2)) + 1)]"/>
-                  <xsl:with-param name="base-position" select="$base-position"/>
-                </xsl:call-template>                
-              </xsl:if>
-              <xsl:if test="exsl:node-set($elsewhere2)//match/*">
-                <xsl:copy-of select="$elsewhere2 | @*"/>
-              </xsl:if>
-            </xsl:if>
-            <xsl:if test="exsl:node-set($elsewhere1)//match/*">
-              <xsl:copy-of select="$elsewhere1 | @*"/>
-            </xsl:if>
-          </xsl:variable>
-          <xsl:if test="not(exsl:node-set($elsewhere)//match/*)">
-            <mismatch>
-              <xsl:attribute name="position">
-                <xsl:value-of select="$base-position"/>
-              </xsl:attribute>
-              <xsl:copy-of select="$node[1] | @*"/>
-            </mismatch>
-          </xsl:if>          
-          <xsl:if test="count(exsl:node-set($node)) > 1 and not(exsl:node-set($elsewhere)//match/*)">
-            <xsl:call-template name="splitter">
-              <xsl:with-param name="node" select="exsl:node-set($node)[position() > 1]" />
-              <xsl:with-param name="list" select="exsl:node-set($list)" />
-              <xsl:with-param name="base-position" select="$base-position + 1"/>
-            </xsl:call-template>
-          </xsl:if>
-          <xsl:if test="count(exsl:node-set($node)) > 1 and exsl:node-set($elsewhere)//match/*">
-            <xsl:call-template name="splitter">
-              <xsl:with-param name="node" select="exsl:node-set($node)[position() > 1]" />
-              <xsl:with-param name="list" select="exsl:node-set($list)[position() != exsl:node-set($elsewhere)//position-position/@value]" />
-              <xsl:with-param name="base-position" select="$base-position + 1"/>
-            </xsl:call-template>
-          </xsl:if>
-        </xsl:if>
-        <xsl:if test="count(exsl:node-set($node)) > 1 and exsl:node-set($is-match)//match/*">
-          <xsl:call-template name="splitter">
-            <xsl:with-param name="node" select="exsl:node-set($node)[position() > 1]" />
-            <xsl:with-param name="list" select="exsl:node-set($list)[position() > 1]" />
-            <xsl:with-param name="base-position" select="$base-position + 1"/>
-          </xsl:call-template>
-        </xsl:if>
-      </xsl:if>
-    </xsl:if>
+		    <xsl:if test="not(exsl:node-set($nodeLeft)/* and xsl:node-set($nodeRight)/*)">
+				<match>
+			        <xsl:copy-of select="exsl:node-set($nodeLeft)" />
+				</match>
+		    </xsl:if>
+		</xsl:if>
+	    <xsl:if test="not(exsl:node-set($is-match)//match/*)">
+				<match>
+			        <xsl:copy-of select="exsl:node-set($nodeLeft)" />
+				</match>
+	    </xsl:if>
   </xsl:template>
   <!-- The linearization function basically outputs a list of nodes that trace from the leaf back to the root, which is a better expression to compare against  -->
   <xsl:template name="linearization">
