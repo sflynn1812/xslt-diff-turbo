@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
 	<configSections>
-		<section name="MyConfiguration" requirePermission="false"
-				 type="System.Configuration.NameValueSectionHandler,System,Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+		<section name="MyConfiguration" requirePermission="false" type="System.Configuration.NameValueSectionHandler,System,Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
 	</configSections>
 	<MyConfiguration>
 		<add key="ApplicationName" value="Configuration Tests" />
