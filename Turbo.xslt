@@ -80,10 +80,9 @@ extension-element-prefixes="exsl"
 	</xsl:template>
 	<xsl:template name="sortLinearization">
 		<xsl:param name="list"></xsl:param>
-			<xsl:for-each name="exsl:node-set($list)/*">
-				<xsl:sort select="*|@*">
-					<xsl:copy-of select="exsl:node-set(.|./@*)"/>
-				</xsl:sort>
+			<xsl:for-each select="exsl:node-set($list)/*">
+				<xsl:sort select="*|@*"/>
+				<xsl:copy-of select="exsl:node-set(.|./@*)"/>
 			</xsl:for-each>
 	</xsl:template>
 	<xsl:template name="divideAndConquer">
