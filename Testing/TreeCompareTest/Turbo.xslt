@@ -43,6 +43,7 @@ extension-element-prefixes="exsl"
 		<xsl:param name="comparer"/>
 		<xsl:param name="tree"/>
 		<root>
+			<!-- to do sort linearization then compare branches forward and backward to solve twinning problem (duplicate leaf elements) -->
 			<xsl:variable name="linear-comparer">
 				<xsl:call-template name="linearization">
 					<xsl:with-param name="tree" select="exsl:node-set($comparer)/."/>
@@ -76,6 +77,14 @@ extension-element-prefixes="exsl"
 				<xsl:with-param name="list" select="exsl:node-set($list)/*"/>
 			</xsl:call-template>
 		</xsl:for-each>
+	</xsl:template>
+	<xsl:template name="sortLinearization">
+		<xsl:param name="list"></xsl:param>
+			<xsl:for-each name="exsl:node-set($list)/*">
+				<xsl:sort select="*|@*">
+					<xsl:copy-of select="exsl:node-set(.|./@*)"/>
+				</xsl:sort>
+			</xsl:for-each>
 	</xsl:template>
 	<xsl:template name="divideAndConquer">
 		<xsl:param name="node"></xsl:param>
