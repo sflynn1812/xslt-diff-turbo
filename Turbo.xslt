@@ -44,14 +44,29 @@ extension-element-prefixes="exsl"
 		<xsl:param name="tree"/>
 		<root>
 			<!-- to do sort linearization then compare branches forward and backward to solve twinning problem (duplicate leaf elements) -->
-			<xsl:variable name="linear-comparer">
+			<xsl:variable name="linear-comparer-unsorted">
 				<xsl:call-template name="linearization">
 					<xsl:with-param name="tree" select="exsl:node-set($comparer)/."/>
 				</xsl:call-template>
 			</xsl:variable>
-			<xsl:variable name="linear-tree">
+			<xsl:variable name="linear-comparer">
+			<xsl:call-template name="sortLinearization">
+			
+			</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="linear-tree-unsorted">
 				<xsl:call-template name="linearization">
 					<xsl:with-param name="tree" select="exsl:node-set($tree)/."/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="linear-comparer">
+				<xsl:call-template name="sortLinearization">
+					<xsl:with-param name="list" select="exsl:node-set($linear-comparer-unsorted)/*" />
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="linear-tree">
+				<xsl:call-template name="sortLinearization">
+					<xsl:with-param name="list" select="exsl:node-set($linear-tree-unsorted)/*" />
 				</xsl:call-template>
 			</xsl:variable>
 			<left-not-in-right>
@@ -105,6 +120,24 @@ extension-element-prefixes="exsl"
 					</xsl:if>
 				</xsl:variable>
 				<xsl:if test="exsl:node-set($elsewhere1)//match/*">
+					<!-- twin of branch to leaf checking -->
+					<xsl:variable name="theFollowingSiblingIsDuplicate">
+						<xsl:call-template name="branchToChildMatch">
+							<xsl:with-param name="nodeLeft" select="exsl:node-set($node)/following-sibling::*" />
+							<xsl:with-param name="nodeRight" select="exsl:node-set($list)" />
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:variable name="theFollowingSiblingOfTheMatchBranchIsDuplicate">
+						<xsl:call-template name="branchToChildMatch">
+							<xsl:with-param name="nodeLeft" select="exsl:node-set($node)/following-sibling::*" />
+							<xsl:with-param name="nodeRight" select="exsl:node-set($list)/following-sibling::*" />
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:if test="exsl:node-set($theFollowingSiblingIsDuplicate)//match and not(exsl:node-set($theFollowingSiblingOfTheMatchBranchIsDuplicate)//match)">
+						<mismatch>
+								<xsl:copy-of select="exsl:node-set($list)/following-sibling::(* | @*)"/>
+						</mismatch>
+					</xsl:if>
 					<match>
 						<xsl:copy-of select="exsl:node-set($node | @*)"/>
 					</match>				
@@ -122,6 +155,24 @@ extension-element-prefixes="exsl"
 				</xsl:if>
 			</xsl:variable>
 			<xsl:if test="exsl:node-set($elsewhere2)//match/*">
+				<!-- twin of branch to leaf checking -->
+				<xsl:variable name="theFollowingSiblingIsDuplicate">
+						<xsl:call-template name="branchToChildMatch">
+							<xsl:with-param name="nodeLeft" select="exsl:node-set($node)/following-sibling::*" />
+							<xsl:with-param name="nodeRight" select="exsl:node-set($list)" />
+						</xsl:call-template>
+				</xsl:variable>
+				<xsl:variable name="theFollowingSiblingOfTheMatchBranchIsDuplicate">
+						<xsl:call-template name="branchToChildMatch">
+							<xsl:with-param name="nodeLeft" select="exsl:node-set($node)/following-sibling::*" />
+							<xsl:with-param name="nodeRight" select="exsl:node-set($list)/following-sibling::*" />
+						</xsl:call-template>
+				</xsl:variable>
+				<xsl:if test="exsl:node-set($theFollowingSiblingIsDuplicate)//match and not(exsl:node-set($theFollowingSiblingOfTheMatchBranchIsDuplicate)//match)">
+						<mismatch>
+								<xsl:copy-of select="exsl:node-set($list)/following-sibling::(* | @*)"/>
+						</mismatch>
+				</xsl:if>
 				<match>
 					<xsl:copy-of select="exsl:node-set($node | @*)"/>
 				</match>
