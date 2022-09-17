@@ -1,3 +1,9 @@
+Truthfully I do not give f()ck what you do with this software.  Use it in software systems to support in totalitarian regimes, make terminator robots and make the planet uninhabitable with pollution.  You are only hurting yourself with such behaviour.
+Just promise me one thing.  Do not buy a pickup truck and not use it for any practical hauling.  Like why waste the gasoline (or petrol if you prefer)?  Its just annoying to see someone drive a hemi truck who uses it once a year to take a cooler to the beach.  You are not cool, you look like an 1d01t.
+
+
+
+
 Warning: has edge cases that do not work. New version under construction.
 
 #&nbsp;xslt-diff-turbo
